@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Health Voice Assistant - Talk in Hindi/English">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎤</text></svg>">
+    <title>AI Health Voice Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .voice-container {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .voice-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .voice-logo {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .voice-title {
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .voice-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        .language-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .lang-chip {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .lang-chip.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .chat-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            height: 350px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+        
+        /* Text Input Section Styles */
+        .text-input-section {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .text-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .text-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .text-input:focus {
+            border-color: #00d4ff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .text-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .send-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #00d4ff, #00a8cc);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+        
+        .speak-input-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .speak-input-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #00d4ff;
+        }
+        
+        .speak-input-btn.listening {
+            background: #ff4757;
+            border-color: #ff4757;
+            animation: pulse 1s infinite;
+        }
+        
+        .text-input-status {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+        }
+        
+        .instant-feedback {
+            font-size: 14px;
+            color: #00d4ff;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.bot .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-icon {
+            font-size: 24px;
+            margin-right: 10px;
+            align-self: flex-end;
+        }
+
+        .message.user .message-icon {
+            order: 1;
+            margin-right: 0;
+            margin-left: 10px;
+        }
+
+        .listening-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .listening-indicator.active {
+            display: block;
+        }
+
+        .sound-wave {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            height: 50px;
+        }
+
+        .sound-wave span {
+            width: 4px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 2px;
+            animation: soundWave 1s infinite;
+        }
+
+        .sound-wave span:nth-child(1) { height: 20px; animation-delay: 0s; }
+        .sound-wave span:nth-child(2) { height: 30px; animation-delay: 0.1s; }
+        .sound-wave span:nth-child(3) { height: 40px; animation-delay: 0.2s; }
+        .sound-wave span:nth-child(4) { height: 50px; animation-delay: 0.3s; }
+        .sound-wave span:nth-child(5) { height: 40px; animation-delay: 0.4s; }
+        .sound-wave span:nth-child(6) { height: 30px; animation-delay: 0.5s; }
+        .sound-wave span:nth-child(7) { height: 20px; animation-delay: 0.6s; }
+
+        @keyframes soundWave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.5); }
+        }
+
+        .voice-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .mic-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mic-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .mic-button.listening {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            animation: pulse 1s infinite;
+        }
+
+        .mic-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .clear-btn {
+            padding: 15px 25px;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+
+        .disclaimer {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+        }
+
+        .thinking {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .thinking-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .thinking-dots span {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .thinking-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .thinking-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="voice-container">
+        <div class="voice-header">
+            <div class="voice-logo">🎤</div>
+            <h1 class="voice-title">AI Health Voice Assistant</h1>
+            <p class="voice-subtitle">Talk to me in Hindi, English, or Hinglish!</p>
+        </div>
+
+        <div class="language-indicator">
+            <div class="lang-chip active" data-lang="hi" onclick="setVoiceLang('hi')">🇮🇳 हिंदी</div>
+            <div class="lang-chip" data-lang="en" onclick="setVoiceLang('en')">🇺🇸 English</div>
+            <div class="lang-chip" data-lang="hinglish" onclick="setVoiceLang('hinglish')">🇮🇳 Hinglish</div>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot">
+                <span class="message-icon">🤖</span>
+                <div class="message-content">
+                    Namaste! 🙏 I'm your AI Health Assistant. You can ask me about:
+                    <br>• Your symptoms
+                    • Health advice
+                    • Medical information
+                    <br>Just speak or type in Hindi or English!
+                </div>
+            </div>
+        </div>
+
+        <div class="text-input-section">
+            <div class="text-input-wrapper">
+                <input type="text" id="textInput" class="text-input" placeholder="Type here... (Hindi/English/Hinglish)" autocomplete="off">
+                <button class="send-btn" onclick="sendTextInput()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+                <button class="speak-input-btn" id="speakInputBtn" onclick="toggleInputListening()" title="Speak Input">
+                    🎤
+                </button>
+            </div>
+            <div class="text-input-status" id="textInputStatus">
+                Type or speak to chat - I'll respond with voice! 🔊<br>
+                <small style="color: #ff6b6b;">Voice may not work on mobile. Use text input below if needed.</small>
+            </div>
+        </div>
+
+        <div class="listening-indicator" id="listeningIndicator">
+            <div class="sound-wave">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <p style="margin-top: 15px;">Listening...</p>
+        </div>
+
+        <div class="voice-controls">
+            <button class="mic-button" id="micBtn" onclick="toggleListening()">
+                🎤
+            </button>
+            <button class="clear-btn" onclick="clearChat()">🗑️ Clear</button>
+        </div>
+
+        <a href="/" class="back-link">← Back to Symptom Checker</a>
+        
+        <p class="disclaimer">⚠️ This is not medical advice. Consult a doctor for proper diagnosis.</p>
+    </div>
+
+    <script>
+        let isListening = false;
+        let isInputListening = false;
+        let inputRecognition = null;
+        let recognition = null;
+        let currentLang = 'hi-IN';
+        let synth = window.speechSynthesis;
+        let chatHistory = [];
+
+        // Initialize speech recognition
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                alert('Speech recognition is not supported in your browser. Please use Chrome, Edge, or Safari.');
+                document.getElementById('micBtn').disabled = true;
+                return;
+            }
+            
+            try {
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.lang = currentLang;
+                recognition.maxAlternatives = 1;
+
+                recognition.onresult = function(event) {
+                    const transcript = Array.from(event.results)
+                        .map(result => result[0].transcript)
+                        .join('');
+
+                    if (event.results[0].isFinal) {
+                        processUserInput(transcript);
+                    }
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    stopListening();
+                    let errorMsg = "Sorry, I didn't catch that. Please try again.";
+                    if (event.error === 'no-speech') {
+                        errorMsg = "No speech detected. Please speak louder or try again.";
+                    } else if (event.error === 'not-allowed') {
+                        errorMsg = "Microphone access denied. Please allow microphone permission in your browser settings.";
+                    } else if (event.error === 'network') {
+                        errorMsg = "Network error. Please check your internet connection.";
+                    }
+                    addBotMessage(errorMsg);
+                };
+
+                recognition.onend = function() {
+                    if (isListening) {
+                        try {
+                            recognition.start();
+                        } catch(e) {
+                            stopListening();
+                        }
+                    }
+                };
+            } catch(e) {
+                console.error('Speech recognition initialization error:', e);
+                alert('Failed to initialize speech recognition. Please try using Chrome browser.');
+            }
+        }
+
+        // Set voice language
+        function setVoiceLang(lang) {
+            document.querySelectorAll('.lang-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+
+            switch(lang) {
+                case 'hi':
+                    currentLang = 'hi-IN';
+                    break;
+                case 'en':
+                    currentLang = 'en-US';
+                    break;
+                case 'hinglish':
+                    currentLang = 'hi-IN';
+                    break;
+            }
+
+            if (recognition) {
+                recognition.lang = currentLang;
+            }
+        }
+
+        // Toggle listening
+        function toggleListening() {
+            if (!recognition) {
+                initSpeechRecognition();
+            }
+
+            if (isListening) {
+                stopListening();
+            } else {
+                startListening();
+            }
+        }
+
+        function startListening() {
+            isListening = true;
+            document.getElementById('micBtn').classList.add('listening');
+            document.getElementById('listeningIndicator').classList.add('active');
+            
+            // Request microphone permission explicitly if not granted
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(function(stream) {
+                        // Permission granted, start recognition
+                        try {
+                            recognition.start();
+                        } catch(e) {
+                            console.error('Recognition start error:', e);
+                            addBotMessage("Could not start voice recognition. Please allow microphone access in your browser settings.");
+                            stopListening();
+                        }
+                    })
+                    .catch(function(err) {
+                        console.error('Microphone permission error:', err);
+                        addBotMessage("Microphone access denied. Please allow microphone permission in your browser and refresh the page.");
+                        stopListening();
+                    });
+            } else {
+                try {
+                    recognition.start();
+                } catch(e) {
+                    console.error('Recognition start error:', e);
+                    addBotMessage("Voice recognition not supported in this browser. Please use Chrome or Edge.");
+                    stopListening();
+                }
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+            document.getElementById('micBtn').classList.remove('listening');
+            document.getElementById('listeningIndicator').classList.remove('active');
+            
+            if (recognition) {
+                try {
+                    recognition.stop();
+                } catch(e) {}
+            }
+        }
+
+        // Process user input
+        async function processUserInput(text) {
+            if (!text.trim()) return;
+
+            stopListening();
+            addUserMessage(text);
+            
+            // Show thinking indicator
+            showThinking();
+
+            try {
+                // Send to backend for processing
+                const response = await fetch('/api/voice-chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: text,
+                        language: currentLang,
+                        history: chatHistory
+                    })
+                });
+
+                const data = await response.json();
+                hideThinking();
+
+                if (response.ok && data.response) {
+                    addBotMessage(data.response);
+                    speakText(data.response);
+                } else if (data.error) {
+                    addBotMessage("Sorry, I encountered an error: " + data.error);
+                } else {
+                    // Try local response as fallback
+                    const localResponse = getLocalResponse(text, currentLang);
+                    addBotMessage(localResponse);
+                    speakText(localResponse);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                hideThinking();
+                // Use local response as fallback
+                const localResponse = getLocalResponse(text, currentLang);
+                addBotMessage(localResponse + " (Offline mode)");
+                speakText(localResponse);
+            }
+        }
+
+        // Local fallback responses - expanded with more health topics
+        function getLocalResponse(text, lang) {
+            const textLower = text.toLowerCase();
+            const isHindi = lang.includes('hi');
+            
+            // Greetings
+            if (textLower.includes('hello') || textLower.includes('hi') || textLower.includes('namaste') || 
+                textLower.includes('नमस्ते') || textLower.includes('hi') || textLower.includes('hey')) {
+                return isHindi ? 
+                    "नमस्ते! मैं आपकी कैसे मदद कर सकती हूं? आप अपने लक्षण बता सकते हैं।" :
+                    "Hello! How can I help you? You can tell me about your symptoms.";
+            }
+            
+            // Fever
+            if (textLower.includes('fever') || textLower.includes('bukhar') || textLower.includes('बुखार') || 
+                textLower.includes('temperature') || textLower.includes('taap') || textLower.includes('तेज बुखार')) {
+                return isHindi ? 
+                    "बुखार के कई कारण हो सकते हैं जैसे इन्फ्लुएंज़ा, इन्फेक्शन। अगर बुखार 102°F से ऊपर है या 3 दिन से ज्यादा है, तो डॉक्टर से मिलें। पर्याप्त पानी पिएं और आराम करें।" :
+                    "Fever can be caused by many things like flu or infection. If fever is above 102°F or lasts more than 3 days, please see a doctor. Drink plenty of fluids and rest.";
+            }
+            
+            // Cough
+            if (textLower.includes('cough') || textLower.includes('khansi') || textLower.includes('खांसी') || 
+                textLower.includes('khansi') || textLower.includes('productive cough')) {
+                return isHindi ?
+                    "खांसी आमतौर पर वायरल इन्फेक्शन से होती है। गरम पानी पिएं, शहद लें, और आराम करें। अगर खांसी 2 हफ्ते से ज्यादा है तो डॉक्टर से मिलें।" :
+                    "Cough is usually caused by viral infection. Drink warm water, honey, and rest. If cough lasts more than 2 weeks, see a doctor.";
+            }
+            
+            // Cold
+            if (textLower.includes('cold') || textLower.includes('sardi') || textLower.includes('सर्दी') || 
+                textLower.includes('runny nose') || textLower.includes('nak se pani')) {
+                return isHindi ?
+                    "सर्दी आमतौर पर 7-10 दिन में ठीक हो जाती है। गरम पानी पिएं, आराम करें, और विटामिन C लें।" :
+                    "Cold usually heals in 7-10 days. Drink warm water, rest, and take vitamin C.";
+            }
+            
+            // Headache
+            if (textLower.includes('headache') || textLower.includes('sirdard') || textLower.includes('सिरदर्द') || 
+                textLower.includes('sir dard') || textLower.includes('head pain')) {
+                return isHindi ?
+                    "सिरदर्द के कई कारण हो सकते हैं जैसे तनाव, माइग्रेन, या नींद की कमी। अगर सिरदर्द गंभीर है या बार-बार होता है, तो डॉक्टर से मिलें। पर्याप्त नींद लें।" :
+                    "Headache can be caused by many things like stress, migraine, or lack of sleep. If headache is severe or frequent, please see a doctor. Get enough sleep.";
+            }
+            
+            // Stomach pain
+            if (textLower.includes('stomach') || textLower.includes('pet') || textLower.includes('पेट') || 
+                textLower.includes('pet dard') || textLower.includes('abdominal pain') || textLower.includes('pet me dard')) {
+                return isHindi ?
+                    "पेट दर्द के कई कारण हो सकते हैं। अगर दर्द गंभीर है या उल्टी/दस्त के साथ है, तो तुरंत डॉक्टर से मिलें। हल्का खाना खाएं।" :
+                    "Stomach pain can have many causes. If pain is severe or accompanied by vomiting/diarrhea, please see a doctor immediately. Eat light food.";
+            }
+            
+            // Body ache / pain
+            if (textLower.includes('body pain') || textLower.includes('badan dard') || textLower.includes('बदन दर्द') || 
+                textLower.includes('muscle pain') || textLower.includes('dard')) {
+                return isHindi ?
+                    "बदन दर्द फ्लू या वायरल इन्फेक्शन का लक्षण हो सकता है। आराम करें और पर्याप्त पानी पिएं। अगर दर्द बढ़े तो डॉक्टर से मिलें।" :
+                    "Body pain can be a symptom of flu or viral infection. Rest and drink plenty of water. If pain increases, see a doctor.";
+            }
+            
+            // Tiredness / Fatigue
+            if (textLower.includes('tired') || textLower.includes('thakan') || textLower.includes('थकान') || 
+                textLower.includes('fatigue') || textLower.includes('weakness') || textLower.includes('kamzori')) {
+                return isHindi ?
+                    "थकान के कई कारण हो सकते हैं जैसे नींद की कमी, खाने की कमी, या कोई बीमारी। पर्याप्त नींद लें और संतुलित आहार लें।" :
+                    "Tiredness can be caused by many things like lack of sleep, poor diet, or illness. Get enough sleep and eat a balanced diet.";
+            }
+            
+            // Nausea
+            if (textLower.includes('nausea') || textLower.includes('matli') || textLower.includes('मतली') || 
+                textLower.includes('vomiting') || textLower.includes('ulti') || textLower.includes('उल्टी')) {
+                return isHindi ?
+                    "मतली या उल्टी खाने की समस्या या वायरल इन्फेक्शन से हो सकती है। छोटे-छोटे घूंट में पानी पिएं। अगर लगातार हो तो डॉक्टर से मिलें।" :
+                    "Nausea or vomiting can be caused by food problems or viral infection. Sip water in small amounts. If persistent, see a doctor.";
+            }
+            
+            // Diarrhea
+            if (textLower.includes('diarrhea') || textLower.includes('dast') || textLower.includes('दस्त') || 
+                textLower.includes('loose motion')) {
+                return isHindi ?
+                    "दस्त के दौरान पर्याप्त पानी पिएं और ORS लें। तला-भुना और मसालेदार खाना नहीं खाएं। अगर 3 दिन से ज्यादा हो तो डॉक्टर से मिलें।" :
+                    "Drink plenty of water and take ORS during diarrhea. Avoid fried and spicy food. If it lasts more than 3 days, see a doctor.";
+            }
+            
+            // Thank you
+            if (textLower.includes('thank') || textLower.includes('dhanyawad') || textLower.includes('धन्यवाद') || 
+                textLower.includes('thanks')) {
+                return isHindi ?
+                    "आपका स्वागत है! अगर कोई और लक्षण हों तो बता सकते हैं।" :
+                    "You're welcome! If you have any other symptoms, please let me know.";
+            }
+            
+            // Bye
+            if (textLower.includes('bye') || textLower.includes('alvida') || textLower.includes('अलविदा') || 
+                textLower.includes('goodbye')) {
+                return isHindi ?
+                    "अलविदा! स्वस्थ रहें!" :
+                    "Goodbye! Stay healthy!";
+            }
+            
+            // Default - ask about symptoms
+            return isHindi ? 
+                "मैं समझ नहीं पायी। कृपया अपने लक्षण बताएं जैसे - बुखार, खांसी, सिरदर्द, पेट दर्द, थकान, इत्यादि।" :
+                "I didn't understand. Please tell me about your symptoms like - fever, cough, headache, stomach pain, fatigue, etc.";
+        }
+
+        // Add user message to chat
+        function addUserMessage(text) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            messageDiv.innerHTML = `
+                <div class="message-content">${escapeHtml(text)}</div>
+                <span class="message-icon">👤</span>
+            `;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            chatHistory.push({ role: 'user', content: text });
+        }
+
+        // Add bot message to chat
+        function addBotMessage(text) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.innerHTML = `
+                <span class="message-icon">🤖</span>
+                <div class="message-content">${escapeHtml(text)}</div>
+            `;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            chatHistory.push({ role: 'bot', content: text });
+        }
+
+        // Show thinking indicator
+        function showThinking() {
+            const chatContainer = document.getElementById('chatContainer');
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.id = 'thinkingIndicator';
+            thinkingDiv.className = 'message bot';
+            thinkingDiv.innerHTML = `
+                <span class="message-icon">🤖</span>
+                <div class="thinking">
+                    <div class="thinking-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <span>Thinking...</span>
+                </div>
+            `;
+            chatContainer.appendChild(thinkingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Hide thinking indicator
+        function hideThinking() {
+            const thinking = document.getElementById('thinkingIndicator');
+            if (thinking) {
+                thinking.remove();
+            }
+        }
+
+        // Text to speech with female voice
+        function speakText(text) {
+            // Cancel any ongoing speech
+            synth.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Determine the correct language for TTS based on current selection
+            let ttsLang = 'en-US';
+            if (currentLang === 'hi-IN' || currentLang === 'hinglish') {
+                ttsLang = 'hi-IN'; // Use Hindi voice for both Hindi and Hinglish
+            }
+            
+            utterance.lang = ttsLang;
+            utterance.rate = 0.85; // Slightly slower for clarity
+            utterance.pitch = 1.3; // Higher pitch for female-sounding voice
+            utterance.volume = 1.0;
+            
+            // Get voices and select the best matching voice
+            const voices = synth.getVoices();
+            let selectedVoice = null;
+            
+            if (voices.length > 0) {
+                // For Hindi, try to find Hindi voice first
+                if (ttsLang === 'hi-IN') {
+                    const hindiVoices = [
+                        'Google हिन्दी',
+                        'Google Hindi'
+                    ];
+                    for (let voiceName of hindiVoices) {
+                        selectedVoice = voices.find(v => v.name.includes(voiceName));
+                        if (selectedVoice) break;
+                    }
+                    // If no Hindi voice found, try any Hindi lang
+                    if (!selectedVoice) {
+                        selectedVoice = voices.find(v => v.lang.includes('hi'));
+                    }
+                }
+                
+                // For English, try to find English voice
+                if (!selectedVoice && ttsLang === 'en-US') {
+                    const englishVoices = [
+                        'Google US English',
+                        'Microsoft Zira',
+                        'Samantha',
+                        'Victoria',
+                        'Google UK English Female',
+                        'Microsoft Hazel'
+                    ];
+                    for (let voiceName of englishVoices) {
+                        selectedVoice = voices.find(v => v.name.includes(voiceName.split(' ')[0])) || 
+                                       voices.find(v => v.name.includes(voiceName));
+                        if (selectedVoice) break;
+                    }
+                    // Fallback to any English voice
+                    if (!selectedVoice) {
+                        selectedVoice = voices.find(v => v.lang.includes('en'));
+                    }
+                }
+            }
+            
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+            
+            synth.speak(utterance);
+        }
+
+        // Clear chat
+        function clearChat() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.innerHTML = `
+                <div class="message bot">
+                    <span class="message-icon">🤖</span>
+                    <div class="message-content">
+                        Namaste! 🙏 I'm your AI Health Assistant. You can ask me about:
+                        <br>• Your symptoms
+                        <br>• Health advice
+                        <br>• Medical information
+                        <br>Just speak or type in Hindi or English!
+                    </div>
+                </div>
+            `;
+            chatHistory = [];
+            synth.cancel();
+        }
+        
+        // Send text input and get instant voice response
+        function sendTextInput() {
+            const textInput = document.getElementById('textInput');
+            const message = textInput.value.trim();
+            
+            if (message) {
+                // Add user message to chat
+                addUserMessage(message);
+                
+                // Clear input
+                textInput.value = '';
+                
+                // Process and get response with voice
+                processUserInput(message);
+            }
+        }
+        
+        // Handle Enter key in text input
+        document.addEventListener('DOMContentLoaded', function() {
+            const textInput = document.getElementById('textInput');
+            if (textInput) {
+                textInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendTextInput();
+                    }
+                });
+            }
+        });
+        
+        // Toggle voice input for text field
+        function toggleInputListening() {
+            const inputBtn = document.getElementById('speakInputBtn');
+            const statusDiv = document.getElementById('textInputStatus');
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                statusDiv.textContent = 'Voice input not supported in this browser';
+                return;
+            }
+            
+            if (isInputListening) {
+                // Stop listening
+                if (inputRecognition) {
+                    inputRecognition.stop();
+                }
+                isInputListening = false;
+                inputBtn.classList.remove('listening');
+                statusDiv.textContent = 'Type or speak to chat - I will respond with voice!';
+            } else {
+                // Start listening
+                inputRecognition = new SpeechRecognition();
+                inputRecognition.continuous = false;
+                inputRecognition.interimResults = true;
+                inputRecognition.lang = currentLang;
+                
+                inputRecognition.onresult = function(event) {
+                    const transcript = Array.from(event.results)
+                        .map(result => result[0].transcript)
+                        .join('');
+                    
+                    document.getElementById('textInput').value = transcript;
+                    
+                    if (event.results[0].isFinal) {
+                        // Automatically send when speech ends
+                        sendTextInput();
+                    }
+                };
+                
+                inputRecognition.onerror = function(event) {
+                    console.error('Input recognition error:', event.error);
+                    isInputListening = false;
+                    inputBtn.classList.remove('listening');
+                    statusDiv.textContent = 'Voice input error. Please try again.';
+                };
+                
+                inputRecognition.onend = function() {
+                    isInputListening = false;
+                    inputBtn.classList.remove('listening');
+                };
+                
+                inputRecognition.start();
+                isInputListening = true;
+                inputBtn.classList.add('listening');
+                statusDiv.textContent = 'Listening for your message...';
+            }
+        }
+        
+        // Clear chat
+        function clearChat() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.innerHTML = `
+                <div class="message bot">
+                    <span class="message-icon">🤖</span>
+                    <div class="message-content">
+                        Namaste! 🙏 I'm your AI Health Assistant. You can ask me about:
+                        <br>• Your symptoms
+                        • Health advice
+                        • Medical information
+                        <br>Just speak or type in Hindi or English!
+                    </div>
+                </div>
+            `;
+            chatHistory = [];
+            synth.cancel();
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initSpeechRecognition();
+        };
+    </script>
+</body>
+</html>

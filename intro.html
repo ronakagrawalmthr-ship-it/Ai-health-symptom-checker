@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Health Tracker - Your Personal Health Assistant">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>">
+    <title>AI Health Tracker - Your Personal Health Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 153, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 255, 200, 0.08) 0%, transparent 40%);
+            animation: rotate 60s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; animation-duration: 12s; }
+        .particle:nth-child(2) { left: 20%; top: 80%; animation-delay: 2s; animation-duration: 18s; }
+        .particle:nth-child(3) { left: 30%; top: 40%; animation-delay: 4s; animation-duration: 14s; }
+        .particle:nth-child(4) { left: 40%; top: 60%; animation-delay: 1s; animation-duration: 16s; }
+        .particle:nth-child(5) { left: 50%; top: 30%; animation-delay: 3s; animation-duration: 20s; }
+        .particle:nth-child(6) { left: 60%; top: 70%; animation-delay: 5s; animation-duration: 13s; }
+        .particle:nth-child(7) { left: 70%; top: 50%; animation-delay: 2.5s; animation-duration: 17s; }
+        .particle:nth-child(8) { left: 80%; top: 20%; animation-delay: 1.5s; animation-duration: 15s; }
+        .particle:nth-child(9) { left: 90%; top: 90%; animation-delay: 4.5s; animation-duration: 19s; }
+        .particle:nth-child(10) { left: 15%; top: 50%; animation-delay: 3.5s; animation-duration: 11s; }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) translateX(0) scale(1); 
+                opacity: 0.3;
+            }
+            25% { 
+                transform: translateY(-100px) translateX(50px) scale(1.2); 
+                opacity: 0.6;
+            }
+            50% { 
+                transform: translateY(-200px) translateX(-30px) scale(0.8); 
+                opacity: 0.4;
+            }
+            75% { 
+                transform: translateY(-150px) translateX(70px) scale(1.1); 
+                opacity: 0.5;
+            }
+        }
+
+        /* Main Container */
+        .intro-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        /* Logo/Icon Animation */
+        .intro-logo {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: pulse-glow 3s ease-in-out infinite, float-icon 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.5));
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.5));
+            }
+            50% { 
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 50px rgba(0, 212, 255, 0.8));
+            }
+        }
+
+        @keyframes float-icon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Main Title */
+        .intro-title {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 40px rgba(0, 212, 255, 0.5);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .intro-title span {
+            background: linear-gradient(135deg, #00d4ff, #ff6b9d, #c56cf0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Subtitle */
+        .intro-subtitle {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            max-width: 600px;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.3s backwards;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            margin-bottom: 50px;
+            animation: fadeInUp 1s ease-out 0.5s backwards;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            animation: fadeInUp 1s ease-out 0.7s backwards;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.6);
+        }
+
+        .cta-button svg {
+            width: 28px;
+            height: 28px;
+            animation: bounce-arrow 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce-arrow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        /* Language Selector */
+        .lang-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover, .lang-btn.active {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: #00d4ff;
+            color: #fff;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            max-width: 500px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .intro-title {
+                font-size: 2.5rem;
+            }
+            
+            .intro-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                padding: 0 20px;
+            }
+            
+            .intro-logo {
+                font-size: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+    </div>
+
+    <div class="intro-container">
+        <!-- Logo -->
+        <div class="intro-logo">🏥</div>
+
+        <!-- Title -->
+        <h1 class="intro-title">
+            <span id="title-text">AI Health Tracker</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="intro-subtitle" id="subtitle-text">
+            Your personal health assistant powered by artificial intelligence. 
+            Analyze symptoms, get health advice, and learn about medical conditions - all in your preferred language!
+        </p>
+
+        <!-- Features -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🔍</span>
+                <h3 class="feature-title" id="feature1-title">Symptom Analysis</h3>
+                <p class="feature-desc" id="feature1-desc">Describe your symptoms in English, Hindi, or Hinglish and get instant analysis</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🎤</span>
+                <h3 class="feature-title" id="feature2-title">Voice Assistant</h3>
+                <p class="feature-desc" id="feature2-desc">Talk to our AI in your preferred language for health guidance</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🌍</span>
+                <h3 class="feature-title" id="feature3-title">Multi-Language</h3>
+                <p class="feature-desc" id="feature3-desc">Full support for English, Hindi, and Hinglish (Indian style)</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">📋</span>
+                <h3 class="feature-title" id="feature4-title">Health Info</h3>
+                <p class="feature-desc" id="feature4-desc">Get detailed information about causes, precautions, and severity</p>
+            </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div style="margin-top: 30px; margin-bottom: 20px; animation: fadeInUp 1s ease-out 0.7s backwards;">
+            <a href="/home" id="continue-btn" style="
+                background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+                color: white;
+                padding: 20px 60px;
+                font-size: 22px;
+                font-weight: bold;
+                text-decoration: none;
+                border-radius: 50px;
+                display: inline-block;
+                box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
+                transition: all 0.4s ease;
+            ">🚀 Continue to use</a>
+        </div>
+
+        <p style="color: white; font-size: 18px; margin-top: 20px;">
+            👆 Tap above to start!
+        </p>
+
+        <!-- Additional Info Section -->
+        <div style="margin-top: 40px; padding: 25px; background: rgba(255,255,255,0.05); border-radius: 20px; max-width: 600px; width: 100%;">
+            <h3 style="color: #00d4ff; margin-bottom: 15px; font-size: 1.2rem;">🌐 Connect With Us</h3>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px;">
+                Join thousands of users who trust AI Health Tracker for their health concerns. 
+                Available in <strong>English</strong>, <strong>हिंदी (Hindi)</strong>, and <strong>Hinglish</strong>!
+            </p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <a href="/voice" style="color: #00d4ff; text-decoration: none; padding: 10px 20px; border: 1px solid #00d4ff; border-radius: 25px; font-size: 0.9rem;">🎤 Voice Assistant</a>
+                <a href="/home" style="color: #7b2ff7; text-decoration: none; padding: 10px 20px; border: 1px solid #7b2ff7; border-radius: 25px; font-size: 0.9rem;">📝 Text Analysis</a>
+            </div>
+        </div>
+
+        <!-- App Features Info -->
+        <div style="margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; max-width: 700px; width: 100%;">
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px;">
+                <span style="font-size: 2rem;">🔍</span>
+                <p style="color: white; font-size: 0.85rem; margin-top: 8px;">Smart Analysis</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px;">
+                <span style="font-size: 2rem;">🎤</span>
+                <p style="color: white; font-size: 0.85rem; margin-top: 8px;">Voice Input</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px;">
+                <span style="font-size: 2rem;">🌍</span>
+                <p style="color: white; font-size: 0.85rem; margin-top: 8px;">3 Languages</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px;">
+                <span style="font-size: 2rem;">📱</span>
+                <p style="color: white; font-size: 0.85rem; margin-top: 8px;">Mobile Ready</p>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div style="margin-top: 35px; max-width: 600px; width: 100%;">
+            <h3 style="color: white; font-size: 1.1rem; margin-bottom: 20px;">📋 How It Works</h3>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <span style="background: linear-gradient(135deg, #00d4ff, #7b2ff7); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">1</span>
+                <span style="color: rgba(255,255,255,0.8); font-size: 0.95rem;">Enter your symptoms or speak them</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <span style="background: linear-gradient(135deg, #00d4ff, #7b2ff7); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">2</span>
+                <span style="color: rgba(255,255,255,0.8); font-size: 0.95rem;">Get instant AI-powered analysis</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <span style="background: linear-gradient(135deg, #00d4ff, #7b2ff7); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">3</span>
+                <span style="color: rgba(255,255,255,0.8); font-size: 0.95rem;">View causes, precautions & severity</span>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div style="margin-top: 35px; display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;">
+            <div style="text-align: center;">
+                <p style="color: #00d4ff; font-size: 2rem; font-weight: bold;">57+</p>
+                <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Medical Conditions</p>
+            </div>
+            <div style="text-align: center;">
+                <p style="color: #7b2ff7; font-size: 2rem; font-weight: bold;">3</p>
+                <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Languages</p>
+            </div>
+            <div style="text-align: center;">
+                <p style="color: #ff6b9d; font-size: 2rem; font-weight: bold;">24/7</p>
+                <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Available</p>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div style="margin-top: 30px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+            <a href="/home" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.85rem;">🔍 Symptom Checker</a>
+            <a href="/voice" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.85rem;">🎤 Voice Assistant</a>
+            <span style="color: rgba(255,255,255,0.4); font-size: 0.85rem;">📱 Mobile Friendly</span>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">Made with ❤️ for better health</p>
+            <p style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 8px;">AI Health Tracker © 2026 | Version 2.0</p>
+        </div>
+
+        <!-- Disclaimer -->
+        <p class="disclaimer" id="disclaimer-text">
+            ⚠️ This is for informational purposes only. Always consult a qualified healthcare professional for medical advice.
+        </p>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "AI Health Tracker",
+                subtitle: "Your personal health assistant powered by artificial intelligence. Analyze symptoms, get health advice, and learn about medical conditions - all in your preferred language!",
+                feature1: { title: "Symptom Analysis", desc: "Describe your symptoms in English, Hindi, or Hinglish and get instant analysis" },
+                feature2: { title: "Voice Assistant", desc: "Talk to our AI in your preferred language for health guidance" },
+                feature3: { title: "Multi-Language", desc: "Full support for English, Hindi, and Hinglish (Indian style)" },
+                feature4: { title: "Health Info", desc: "Get detailed information about causes, precautions, and severity" },
+                cta: "Continue to use",
+                disclaimer: "⚠️ This is for informational purposes only. Always consult a qualified healthcare professional for medical advice."
+            },
+            hi: {
+                title: "AI हेल्थ ट्रैकर",
+                subtitle: "आपका व्यक्तिगत स्वास्थ्य सहायक। अपने लक्षणों का विश्लेषण करें, स्वास्थ्य सलाह प्राप्त करें - आपकी पसंदीदा भाषा में!",
+                feature1: { title: "लक्षण विश्लेषण", desc: "अंग्रेजी, हिंदी या हिंग्लिश में अपने लक्षणों का वर्णन करें" },
+                feature2: { title: "वॉइस असिस्टेंट", desc: "स्वास्थ्य मार्गदर्शन के लिए हमारे AI से बात करें" },
+                feature3: { title: "बहुभाषी", desc: "अंग्रेजी, हिंदी और हिंग्लिश (भारतीय शैली) का पूर्ण समर्थन" },
+                feature4: { title: "स्वास्थ्य जानकारी", desc: "कारण, सावधानियों और गंभीरता के बारे में विस्तृत जानकारी प्राप्त करें" },
+                cta: "जारी रखें",
+                disclaimer: "⚠️ यह केवल सूचना के उद्देश्यों के लिए है। हमेशा चिकित्सा सलाह के लिए योग्य स्वास्थ्य पेशेवर से परामर्श करें।"
+            }
+        };
+
+        function setLang(lang, event) {
+            const t = translations[lang];
+            
+            document.getElementById('title-text').textContent = t.title;
+            document.getElementById('subtitle-text').textContent = t.subtitle;
+            document.getElementById('feature1-title').textContent = t.feature1.title;
+            document.getElementById('feature1-desc').textContent = t.feature1.desc;
+            document.getElementById('feature2-title').textContent = t.feature2.title;
+            document.getElementById('feature2-desc').textContent = t.feature2.desc;
+            document.getElementById('feature3-title').textContent = t.feature3.title;
+            document.getElementById('feature3-desc').textContent = t.feature3.desc;
+            document.getElementById('feature4-title').textContent = t.feature4.title;
+            document.getElementById('feature4-desc').textContent = t.feature4.desc;
+            document.getElementById('cta-text').textContent = t.cta;
+            document.getElementById('disclaimer-text').textContent = t.disclaimer;
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // Save preference
+            localStorage.setItem('healthTrackerLang', lang);
+        }
+
+        // Add hover effect to continue button
+        const continueBtn = document.getElementById('continue-btn');
+        if (continueBtn) {
+            continueBtn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.05)';
+                this.style.boxShadow = '0 20px 60px rgba(0, 212, 255, 0.6)';
+            });
+            continueBtn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = '0 10px 40px rgba(0, 212, 255, 0.4)';
+            });
+        }
+
+        // Load saved language preference
+        const savedLang = localStorage.getItem('healthTrackerLang');
+        if (savedLang) {
+            setLang(savedLang);
+            // Update Continue button link with saved language
+            if (continueBtn) {
+                continueBtn.href = '/home?lang=' + savedLang;
+            }
+        }
+
+        // Add entrance animation on load
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

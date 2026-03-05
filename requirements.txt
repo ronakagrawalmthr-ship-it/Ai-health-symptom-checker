@@ -1,0 +1,22 @@
+# AI Health Symptom Checker - Dependencies
+
+# Flask web framework
+Flask==3.0.0
+
+# OpenAI API client
+openai==1.12.0
+
+# Python-dotenv for environment variables
+python-dotenv==1.0.0
+
+# Requests for HTTP calls
+requests==2.31.0
+
+# Google Text-to-Speech for melodious voice
+gTTS==2.5.1
+
+# Microsoft Edge TTS for ultra melodious Indian voices
+edge-tts==7.2.7
+
+# Flask CORS extension
+flask-cors==4.0.0

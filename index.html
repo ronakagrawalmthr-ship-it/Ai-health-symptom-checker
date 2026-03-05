@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Health Symptom Checker - Get AI-powered analysis of your symptoms">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩺</text></svg>">
+    <title>AI Health Symptom Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Welcome/Intro Page -->
+    <div class="welcome-page" id="welcomePage">
+        <div class="welcome-container">
+            <div class="welcome-header">
+                <div class="welcome-logo">
+                    <span class="logo-emoji">🩺</span>
+                    <h1>AI Health<br>Symptom Checker</h1>
+                </div>
+                <p class="welcome-tagline">Your AI-powered health assistant</p>
+            </div>
+            
+            <div class="device-detection" id="deviceDetection">
+                <div class="device-icon">
+                    <span id="deviceIcon">📱</span>
+                </div>
+                <p id="deviceText">Detecting device...</p>
+            </div>
+            
+            <div class="language-selection">
+                <p class="lang-prompt">Select Language / भाषा चुनें</p>
+                <div class="lang-buttons">
+                    <button class="lang-btn" data-lang="en" onclick="selectLanguage('en')">
+                        <span class="lang-flag">🇺🇸</span>
+                        <span class="lang-name">English</span>
+                    </button>
+                    <button class="lang-btn" data-lang="hi" onclick="selectLanguage('hi')">
+                        <span class="lang-flag">🇮🇳</span>
+                        <span class="lang-name">हिंदी</span>
+                    </button>
+                    <button class="lang-btn" data-lang="hinglish" onclick="selectLanguage('hinglish')">
+                        <span class="lang-flag">🇮🇳</span>
+                        <span class="lang-name">Hinglish</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="welcome-features">
+                <div class="feature-item">
+                    <span class="feature-icon">⚡</span>
+                    <span class="feature-text">Instant Analysis</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔒</span>
+                    <span class="feature-text">Private & Secure</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🩺</span>
+                    <span class="feature-text">Health Guidance</span>
+                </div>
+            </div>
+            
+            <button class="get-started-btn" onclick="goToChecker()">
+                Get Started
+                <span class="btn-arrow">→</span>
+            </button>
+        </div>
+        
+        <div class="welcome-footer">
+            <p>⚠️ This is not medical advice. Consult a doctor.</p>
+        </div>
+    </div>
+
+    <!-- Main Symptom Checker Page -->
+    <div class="main-page" id="mainPage" style="display: none;">
+        <div class="container">
+            <!-- Header Section -->
+            <header class="header">
+                <div class="header-top">
+                    <button class="back-btn" id="backBtn" onclick="goToWelcome()" title="Back">
+                        ←
+                    </button>
+                    <button class="lang-toggle" id="langToggle" title="Toggle Language" onclick="toggleLanguage()">
+                        <span id="currentLang">EN</span>
+                    </button>
+                    <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode" onclick="toggleTheme()">
+                        🌙
+                    </button>
+                    <button class="voice-assistant-btn" id="voiceAssistantBtn" onclick="goToVoiceAssistant()" title="Voice Assistant">
+                        🎤 Voice
+                    </button>
+                </div>
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="logo-icon">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
+                    </svg>
+                    <h1>AI Health Symptom Checker</h1>
+                </div>
+                <p class="subtitle">Your AI-powered health assistant for symptom analysis</p>
+                
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="showEmergencyContacts()">
+                        🚑 Emergency Contacts
+                    </button>
+                    <button class="quick-action-btn" onclick="showSymptomHistory()">
+                        📋 My History
+                    </button>
+                    <button class="quick-action-btn" onclick="showHealthTips()">
+                        💡 Health Tips
+                    </button>
+                    <button class="quick-action-btn" onclick="showMedicationReminder()">
+                        💊 Medication
+                    </button>
+                    <button class="quick-action-btn" onclick="showDoctorDirectory()">
+                        👨‍⚕️ Find Doctor
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                
+                <!-- How It Works Section -->
+                <section class="intro-section">
+                    <h2 class="intro-title">🩺 How It Works</h2>
+                    <div class="steps-container">
+                        <div class="step-card">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h3>Enter Symptoms</h3>
+                                <p>Describe what you're feeling - pain, discomfort, or any health concerns</p>
+                            </div>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h3>AI Analysis</h3>
+                                <p>Our AI instantly analyzes your symptoms against medical databases</p>
+                            </div>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h3>Get Results</h3>
+                                <p>Receive possible causes, precautions, and severity assessment</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quick Examples Section -->
+                <section class="examples-section">
+                    <h3 class="examples-title">💡 Try These Examples</h3>
+                    <div class="examples-grid">
+                        <button class="example-btn" onclick="setExample('fever, cough, fatigue, body aches')">
+                            🤒 Fever & Flu
+                        </button>
+                        <button class="example-btn" onclick="setExample('headache, nausea, sensitivity to light')">
+                            🤕 Migraine
+                        </button>
+                        <button class="example-btn" onclick="setExample('chest pain, arm pain, sweating, shortness of breath')">
+                            ❤️ Heart Concerns
+                        </button>
+                        <button class="example-btn" onclick="setExample('stomach pain, nausea, vomiting, diarrhea')">
+                            🤢 Stomach Issue
+                        </button>
+                        <button class="example-btn" onclick="setExample('joint pain, swelling, stiffness in morning')">
+                            🦴 Arthritis
+                        </button>
+                        <button class="example-btn" onclick="setExample('rash, itching, dry skin, redness')">
+                            🩹 Skin Problem
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Input Section -->
+                <section class="input-section">
+                    <form id="symptomForm" class="symptom-form">
+                        <div class="form-group">
+                            <label for="symptoms" class="form-label">
+                                <span class="label-icon">🩺</span>
+                                Describe Your Symptoms
+                            </label>
+                            <div class="input-wrapper">
+                                <textarea 
+                                    id="symptoms" 
+                                    name="symptoms" 
+                                    class="form-textarea"
+                                    placeholder="Enter your symptoms here...&#10;Example: headache, fever, fatigue, sore throat"
+                                    rows="6"
+                                    required
+                                ></textarea>
+                                <button type="button" class="voice-btn" id="voiceBtn" onclick="toggleVoiceRecognition()" title="Voice Input">
+                                    🎤
+                                </button>
+                                <div class="suggestions-container" id="suggestionsContainer"></div>
+                            </div>
+                            <div class="voice-status" id="voiceStatus">🎤 Click to speak</div>
+                        </div>
+                        <p class="form-hint">💡 Tip: Include details like duration, severity, and any triggers</p>
+                        
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <span class="btn-text">🔍 Analyze Symptoms</span>
+                            <span class="btn-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="arrow-icon">
+                                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                                </svg>
+                            </span>
+                        </button>
+                    </form>
+                </section>
+
+                <!-- Loading Spinner -->
+                <div class="loading-container" id="loadingContainer">
+                    <div class="spinner">
+                        <div class="spinner-ring"></div>
+                        <div class="spinner-text">Analyzing your symptoms...</div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <section class="results-section" id="resultsSection">
+                    <div class="results-header">
+                        <h2>📊 Analysis Results</h2>
+                        <button class="new-analysis-btn" onclick="resetForm()">New Analysis</button>
+                    </div>
+                    
+                    <!-- Condition Match Card -->
+                    <div class="result-card condition-match-card" id="conditionMatchCard" style="display: none;">
+                        <div class="result-header">
+                            <span class="result-icon">🏥</span>
+                            <h3>Detected Condition</h3>
+                        </div>
+                        <div class="condition-info">
+                            <span class="condition-name" id="conditionName">--</span>
+                            <div class="confidence-section">
+                                <div class="confidence-bar">
+                                    <span class="confidence-label">Match Confidence:</span>
+                                    <span class="confidence-value" id="confidenceValue">0%</span>
+                                </div>
+                                <div class="confidence-progress">
+                                    <div class="confidence-fill" id="confidenceFill" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Severity Level -->
+                    <div class="result-card severity-card" id="severityCard">
+                        <div class="result-header">
+                            <span class="result-icon">⚠️</span>
+                            <h3>Severity Level</h3>
+                        </div>
+                        <div class="severity-badge" id="severityBadge">--</div>
+                    </div>
+                    
+                    <!-- Possible Causes -->
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-icon">🔬</span>
+                            <h3>Possible Causes</h3>
+                        </div>
+                        <ul class="result-list" id="causesList">
+                        </ul>
+                    </div>
+                    
+                    <!-- Precautions -->
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-icon">🛡️</span>
+                            <h3>Suggested Precautions</h3>
+                        </div>
+                        <ul class="result-list" id="precautionsList">
+                        </ul>
+                    </div>
+                    
+                    <!-- Emergency Warning -->
+                    <div class="result-card emergency-card" id="emergencyCard">
+                        <div class="result-header">
+                            <span class="result-icon">🚨</span>
+                            <h3>Emergency Warning</h3>
+                        </div>
+                        <p class="emergency-text" id="emergencyText"></p>
+                    </div>
+
+                    <!-- Read Aloud Button -->
+                    <button type="button" class="speak-btn" id="speakBtn" onclick="speakResults()" title="Listen to Results">
+                        🔊 Listen to Results
+                    </button>
+
+                    <!-- Disclaimer -->
+                    <div class="disclaimer">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="disclaimer-icon">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        </svg>
+                        <p><strong>⚠️ Disclaimer:</strong> This is not medical advice. The information provided is for educational purposes only and should not be used as a substitute for professional medical diagnosis or treatment. Always consult a qualified healthcare provider for any health concerns.</p>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <p>© 2026 AI Health Symptom Checker. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

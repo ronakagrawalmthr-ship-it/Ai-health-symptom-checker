@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Language - AI Health Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: white;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        
+        .language-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .lang-btn {
+            padding: 20px 40px;
+            font-size: 20px;
+            font-weight: 600;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .lang-btn-english {
+            background: linear-gradient(135deg, #00d9ff, #00a8cc);
+            color: #1a1a2e;
+        }
+        
+        .lang-btn-english:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.4);
+        }
+        
+        .lang-btn-hindi {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+        }
+        
+        .lang-btn-hindi:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+        }
+        
+        .lang-icon {
+            margin-right: 10px;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .back-btn:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 भाषा चुनें</h1>
+        <p>Select your preferred language</p>
+        
+        <div class="language-options">
+            <a href="/home?lang=en" class="lang-btn lang-btn-english">
+                <span class="lang-icon">🇺🇸</span> English
+            </a>
+            <a href="/home?lang=hi" class="lang-btn lang-btn-hindi">
+                <span class="lang-icon">🇮🇳</span> हिंदी (Hindi)
+            </a>
+        </div>
+        
+        <a href="/" class="back-btn">← Back to Home</a>
+    </div>
+</body>
+</html>
