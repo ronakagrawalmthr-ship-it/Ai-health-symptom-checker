@@ -1693,6 +1693,523 @@ def get_local_health_response(message, language):
     return responses['default']['hi'] if 'hi' in language else responses['default']['en']
 
 
+# =====================================================
+# COMPREHENSIVE EMERGENCY CONTACTS DATABASE
+# =====================================================
+
+EMERGENCY_CONTACTS = {
+    "india": {
+        "emergency": {
+            "number": "112",
+            "name": "Emergency Services",
+            "icon": "🆘",
+            "description": "All emergency services"
+        },
+        "ambulance": {
+            "number": "102",
+            "name": "Ambulance",
+            "icon": "🚑",
+            "description": "Medical emergency ambulance"
+        },
+        "police": {
+            "number": "100",
+            "name": "Police",
+            "icon": "🚔",
+            "description": "Police emergency"
+        },
+        "fire": {
+            "number": "101",
+            "name": "Fire Department",
+            "icon": "🚒",
+            "description": "Fire emergency"
+        },
+        "disaster": {
+            "number": "108",
+            "name": "Disaster Management",
+            "icon": "🌪️",
+            "description": "Disaster relief services"
+        },
+        "poison_control": {
+            "number": "1066",
+            "name": "Poison Control",
+            "icon": "☠️",
+            "description": "Poison emergency helpline"
+        },
+        "medical_emergency": {
+            "number": "102",
+            "name": "Medical Emergency",
+            "icon": "🏥",
+            "description": "National medical emergency"
+        },
+        "women_helpline": {
+            "number": "1091",
+            "name": "Women Helpline",
+            "icon": "👩",
+            "description": "Women emergency assistance"
+        },
+        "child_helpline": {
+            "number": "1098",
+            "name": "Child Helpline",
+            "icon": "👶",
+            "description": "Child emergency assistance"
+        },
+        "mental_health": {
+            "number": "1800-599-0019",
+            "name": "Mental Health Helpline",
+            "icon": "🧠",
+            "description": "Mental health support"
+        },
+        "covid": {
+            "number": "1075",
+            "name": "COVID Helpline",
+            "icon": "🦠",
+            "description": "COVID-19 assistance"
+        },
+        "air_ambulance": {
+            "number": "104",
+            "name": "Air Ambulance",
+            "icon": "🚁",
+            "description": "Air emergency services"
+        },
+        "railway": {
+            "number": "139",
+            "name": "Railway Helpline",
+            "icon": "🚂",
+            "description": "Railway emergency"
+        },
+        "road_accident": {
+            "number": "1073",
+            "name": "Road Accident Emergency",
+            "icon": "🚗",
+            "description": "Road accident emergency"
+        }
+    },
+    "usa": {
+        "emergency": {
+            "number": "911",
+            "name": "Emergency Services",
+            "icon": "🆘",
+            "description": "All emergency services"
+        },
+        "poison_control": {
+            "number": "1-800-222-1222",
+            "name": "Poison Control",
+            "icon": "☠️",
+            "description": "Poison emergency helpline"
+        },
+        "suicide_prevention": {
+            "number": "988",
+            "name": "Suicide Prevention",
+            "icon": "🧠",
+            "description": "Mental health crisis line"
+        },
+        "police": {
+            "number": "911",
+            "name": "Police",
+            "icon": "🚔",
+            "description": "Police emergency"
+        },
+        "fire": {
+            "number": "911",
+            "name": "Fire Department",
+            "icon": "🚒",
+            "description": "Fire emergency"
+        }
+    },
+    "uk": {
+        "emergency": {
+            "number": "999",
+            "name": "Emergency Services",
+            "icon": "🆘",
+            "description": "All emergency services"
+        },
+        "ambulance": {
+            "number": "999",
+            "name": "Ambulance",
+            "icon": "🚑",
+            "description": "Medical emergency"
+        },
+        "police": {
+            "number": "999",
+            "name": "Police",
+            "icon": "🚔",
+            "description": "Police emergency"
+        },
+        "poison": {
+            "number": "111",
+            "name": "NHS Helpline",
+            "icon": "☠️",
+            "description": "NHS non-emergency"
+        }
+    }
+}
+
+# Specialist type mapping based on symptoms
+SPECIALIST_MAPPING = {
+    "cardiologist": {
+        "keywords": ["chest pain", "heart", "cardiac", "palpitation", "heartbeat", "cardiovascular", "bp", "blood pressure", "chest tightness"],
+        "name": "Cardiologist",
+        "icon": "❤️",
+        "query": "cardiologist"
+    },
+    "pulmonologist": {
+        "keywords": ["breathing", "lung", "cough", "asthma", "respiratory", "shortness of breath", "wheezing", "tb", "tuberculosis"],
+        "name": "Pulmonologist",
+        "icon": "🫁",
+        "query": "pulmonologist"
+    },
+    "dermatologist": {
+        "keywords": ["skin", "rash", "allergy", "itching", "eczema", "psoriasis", "acne", "dermatitis", "skin infection"],
+        "name": "Dermatologist",
+        "icon": "🧴",
+        "query": "dermatologist"
+    },
+    "neurologist": {
+        "keywords": ["headache", "migraine", "brain", "nerve", "seizure", "epilepsy", "stroke", "dizziness", "vertigo", "tremor"],
+        "name": "Neurologist",
+        "icon": "🧠",
+        "query": "neurologist"
+    },
+    "orthopedist": {
+        "keywords": ["bone", "joint", "fracture", "sprain", "back pain", "neck pain", "knee pain", "arthritis", "muscle tear"],
+        "name": "Orthopedist",
+        "icon": "🦴",
+        "query": "orthopedist"
+    },
+    "psychiatrist": {
+        "keywords": ["mental", "depression", "anxiety", "stress", "suicide", "panic", "mental health", "psychological"],
+        "name": "Psychiatrist",
+        "icon": "🧘",
+        "query": "psychiatrist"
+    },
+    "pediatrician": {
+        "keywords": ["child", "kid", "infant", "baby", "pediatric", "children health"],
+        "name": "Pediatrician",
+        "icon": "👶",
+        "query": "pediatrician"
+    },
+    "gastroenterologist": {
+        "keywords": ["stomach", "digestion", "liver", "vomiting", "diarrhea", "constipation", "gastric", "intestine", "food poisoning"],
+        "name": "Gastroenterologist",
+        "icon": "🫃",
+        "query": "gastroenterologist"
+    },
+    "gynecologist": {
+        "keywords": ["pregnancy", "pregnant", "period", "menstrual", "women health", "fertility", "pcod", "pcos"],
+        "name": "Gynecologist",
+        "icon": "🏥",
+        "query": "gynecologist"
+    },
+    "ophthalmologist": {
+        "keywords": ["eye", "vision", "sight", "blind", "cataract", "glaucoma", "eye pain", "eye problem"],
+        "name": "Ophthalmologist",
+        "icon": "👁️",
+        "query": "ophthalmologist"
+    },
+    "ent": {
+        "keywords": ["ear", "nose", "throat", "hearing", "sinus", "nasal", "tonsil", "ear pain", "hearing loss"],
+        "name": "ENT Specialist",
+        "icon": "👂",
+        "query": "ent specialist"
+    },
+    "general_physician": {
+        "keywords": ["fever", "cold", "flu", "general", "unknown", "tired", "fatigue", "weakness", "symptom"],
+        "name": "General Physician",
+        "icon": "🩺",
+        "query": "general physician"
+    }
+}
+
+
+@app.route('/api/emergency-contacts')
+def get_emergency_contacts():
+    """
+    Get emergency contacts for a specific country.
+    Query params: country (default: 'india')
+    Returns: JSON with all emergency contact numbers
+    """
+    country = request.args.get('country', 'india').lower()
+    contacts = EMERGENCY_CONTACTS.get(country, EMERGENCY_CONTACTS['india'])
+    
+    return jsonify({
+        "country": country,
+        "contacts": contacts,
+        "total": len(contacts)
+    })
+
+
+@app.route('/api/analyze-symptoms', methods=['POST'])
+def analyze_symptoms_for_specialist():
+    """
+    Analyze symptoms to determine the appropriate specialist type.
+    Accepts JSON: { "symptoms": "description of symptoms" }
+    Returns: JSON with recommended specialist type
+    """
+    try:
+        data = request.get_json()
+        if not data or 'symptoms' not in data:
+            return jsonify({"error": "No symptoms provided"}), 400
+        
+        symptoms = data['symptoms'].lower()
+        language = data.get('language', 'en')
+        
+        # Find matching specialist
+        best_match = None
+        best_score = 0
+        
+        for specialist_type, specialist_info in SPECIALIST_MAPPING.items():
+            score = 0
+            for keyword in specialist_info['keywords']:
+                if keyword in symptoms:
+                    score += 1
+            
+            if score > best_score:
+                best_score = score
+                best_match = {
+                    "type": specialist_type,
+                    "name": specialist_info['name'],
+                    "icon": specialist_info['icon'],
+                    "query": specialist_info['query']
+                }
+        
+        # Default to general physician if no match
+        if not best_match:
+            best_match = {
+                "type": "general_physician",
+                "name": SPECIALIST_MAPPING["general_physician"]["name"],
+                "icon": SPECIALIST_MAPPING["general_physician"]["icon"],
+                "query": SPECIALIST_MAPPING["general_physician"]["query"]
+            }
+        
+        # Get emergency warning if symptoms indicate emergency
+        emergency_keywords = ["chest pain", "heart attack", "stroke", "difficulty breathing", "bleeding", "unconscious", "seizure", "severe pain"]
+        is_emergency = any(kw in symptoms for kw in emergency_keywords)
+        
+        return jsonify({
+            "symptoms": symptoms,
+            "specialist": best_match,
+            "is_emergency": is_emergency,
+            "language": language,
+            "all_specialists": [{"type": specialist_type, "name": s["name"], "icon": s["icon"]} for specialist_type, s in SPECIALIST_MAPPING.items()]
+        })
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/find-doctors', methods=['POST'])
+def find_doctors():
+    """
+    Find nearby doctors based on symptoms and location.
+    Accepts JSON: { 
+        "symptoms": "description of symptoms",
+        "latitude": 123.456,
+        "longitude": 78.901,
+        "radius": 5000 (optional, in meters)
+    }
+    Returns: JSON with list of nearby specialists
+    
+    Note: This uses Google Places API. If API key is not configured,
+    returns mock data for demonstration.
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+        
+        symptoms = data.get('symptoms', '')
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        radius = data.get('radius', 10000)  # Default 10km radius
+        
+        if not latitude or not longitude:
+            return jsonify({"error": "Location not provided"}), 400
+        
+        # Analyze symptoms to get specialist type
+        symptoms_lower = symptoms.lower()
+        best_match = None
+        best_score = 0
+        
+        for specialist_type, specialist_info in SPECIALIST_MAPPING.items():
+            score = 0
+            for keyword in specialist_info['keywords']:
+                if keyword in symptoms_lower:
+                    score += 1
+            
+            if score > best_score:
+                best_score = score
+                best_match = {
+                    "type": specialist_type,
+                    "name": specialist_info['name'],
+                    "icon": specialist_info['icon'],
+                    "query": specialist_info['query']
+                }
+        
+        if not best_match:
+            best_match = {
+                "type": "general_physician",
+                "name": SPECIALIST_MAPPING["general_physician"]["name"],
+                "icon": SPECIALIST_MAPPING["general_physician"]["icon"],
+                "query": SPECIALIST_MAPPING["general_physician"]["query"]
+            }
+        
+        # Check for Google Maps API key
+        google_api_key = os.getenv('GOOGLE_MAPS_API_KEY')
+        
+        if google_api_key:
+            # Use Google Places API to fetch real doctors
+            doctors = fetch_doctors_from_google_places(latitude, longitude, best_match['query'], radius, google_api_key)
+        else:
+            # Return mock data for demonstration
+            doctors = generate_mock_doctors(latitude, longitude, best_match)
+        
+        return jsonify({
+            "user_location": {
+                "latitude": latitude,
+                "longitude": longitude
+            },
+            "search_query": best_match['query'],
+            "specialist": best_match,
+            "doctors": doctors,
+            "count": len(doctors),
+            "radius_meters": radius
+        })
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def fetch_doctors_from_google_places(lat, lng, query, radius, api_key):
+    """
+    Fetch doctors from Google Places API.
+    Requires: Google Places API enabled in Google Cloud Console
+    """
+    import requests
+    
+    # Use Places API - Nearby Search
+    url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+    params = {
+        "location": f"{lat},{lng}",
+        "radius": radius,
+        "type": "hospital",
+        "keyword": query,
+        "key": api_key
+    }
+    
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        data = response.json()
+        
+        doctors = []
+        for place in data.get('results', [])[:10]:  # Limit to 10 results
+            doctors.append({
+                "name": place.get('name'),
+                "address": place.get('vicinity'),
+                "location": {
+                    "lat": place.get('geometry', {}).get('location', {}).get('lat'),
+                    "lng": place.get('geometry', {}).get('location', {}).get('lng')
+                },
+                "rating": place.get('rating', 0),
+                "user_ratings_total": place.get('user_ratings_total', 0),
+                "place_id": place.get('place_id'),
+                "open_now": place.get('opening_hours', {}).get('open_now'),
+                "types": place.get('types', [])
+            })
+        
+        return doctors
+        
+    except Exception as e:
+        print(f"Error fetching from Google Places: {e}")
+        return generate_mock_doctors(lat, lng, {"type": query, "name": query.title(), "icon": "🩺"})
+
+
+def generate_mock_doctors(lat, lng, specialist):
+    """
+    Generate mock doctor data for demonstration when Google API is not configured.
+    """
+    import random
+    
+    # Sample doctor names
+    doctor_names = [
+        f"Dr. {random.choice(['Rajesh', 'Priya', 'Amit', 'Sunita', 'Vijay', 'Anita', 'Rahul', 'Meera'])} "
+        f"{random.choice(['Kumar', 'Sharma', 'Patel', 'Gupta', 'Singh', 'Verma', 'Joshi', 'Reddy'])}",
+        f"{specialist['name']} Clinic",
+        f"City {specialist['name']} Center",
+        f"Health Plus {specialist['name']}",
+        f"Medicare Hospital - {specialist['name']}"
+    ]
+    
+    addresses = [
+        f"{random.randint(1, 500)}, Main Road, {random.choice(['Sector 15', 'Civil Lines', 'Model Town', 'Raj Nagar', 'Kamla Nagar'])}",
+        f"{random.randint(1, 200)}, {random.choice(['Park Street', 'MG Road', 'Nehru Road', 'Gandhi Chowk'])}",
+        f"{random.randint(1, 100)}, {random.choice(['Hospital Road', 'Medical Campus', 'Health Avenue', 'Care Center'])}"
+    ]
+    
+    doctors = []
+    for i in range(8):
+        # Generate random offset within ~5km
+        offset_lat = (random.random() - 0.5) * 0.02
+        offset_lng = (random.random() - 0.5) * 0.02
+        
+        doctors.append({
+            "name": doctor_names[i % len(doctor_names)],
+            "address": addresses[i % len(addresses)],
+            "location": {
+                "lat": lat + offset_lat,
+                "lng": lng + offset_lng
+            },
+            "rating": round(random.uniform(3.5, 5.0), 1),
+            "user_ratings_total": random.randint(10, 500),
+            "distance_km": round(random.uniform(0.5, 5.0), 1),
+            "phone": f"+91-{random.randint(7000000000, 9999999999)}",
+            "open_now": random.choice([True, False, None]),
+            "specialization": specialist['name'],
+            "icon": specialist['icon']
+        })
+    
+    # Sort by rating
+    doctors.sort(key=lambda x: x['rating'], reverse=True)
+    
+    return doctors
+
+
+@app.route('/api/get-directions', methods=['GET'])
+def get_directions():
+    """
+    Get directions to a specific doctor.
+    Query params: origin_lat, origin_lng, dest_lat, dest_lng
+    Returns: URL for Google Maps directions
+    """
+    origin_lat = request.args.get('origin_lat')
+    origin_lng = request.args.get('origin_lng')
+    dest_lat = request.args.get('dest_lat')
+    dest_lng = request.args.get('dest_lng')
+    
+    if not all([origin_lat, origin_lng, dest_lat, dest_lng]):
+        return jsonify({"error": "Missing coordinates"}), 400
+    
+    # Generate Google Maps directions URL
+    directions_url = f"https://www.google.com/maps/dir/{origin_lat},{origin_lng}/{dest_lat},{dest_lng}"
+    
+    return jsonify({
+        "directions_url": directions_url
+    })
+
+
+@app.route('/api/countries')
+def get_countries():
+    """
+    Get list of supported countries for emergency contacts.
+    """
+    return jsonify({
+        "countries": [
+            {"code": "india", "name": "India", "flag": "🇮🇳"},
+            {"code": "usa", "name": "United States", "flag": "🇺🇸"},
+            {"code": "uk", "name": "United Kingdom", "flag": "🇬🇧"}
+        ]
+    })
+
+
 @app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint."""

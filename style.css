@@ -1434,3 +1434,387 @@ body {
         width: 100%;
     }
 }
+
+/* =====================================================
+   EMERGENCY CONTACTS MODAL STYLES
+   ===================================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: var(--bg-color, #ffffff);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-color, #333);
+}
+
+.close {
+    color: var(--text-muted, #666);
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 5px;
+    transition: color 0.2s;
+}
+
+.close:hover {
+    color: var(--danger-color, #dc3545);
+}
+
+#countrySelector {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    background-color: var(--bg-color, #fff);
+    color: var(--text-color, #333);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.emergency-grid {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+}
+
+.emergency-contact-card {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    color: white;
+}
+
+.emergency-contact-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(238, 90, 90, 0.4);
+}
+
+.emergency-contact-card .contact-icon {
+    font-size: 28px;
+    margin-right: 12px;
+}
+
+.emergency-contact-card .contact-details {
+    flex: 1;
+}
+
+.emergency-contact-card .contact-name {
+    display: block;
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.emergency-contact-card .contact-description {
+    display: block;
+    font-size: 11px;
+    opacity: 0.85;
+}
+
+.emergency-contact-card .contact-number {
+    font-weight: 700;
+    font-size: 18px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid var(--border-color, #e0e0e0);
+    text-align: center;
+}
+
+.emergency-note {
+    color: var(--text-muted, #666);
+    font-size: 14px;
+    margin: 0;
+}
+
+/* =====================================================
+   FIND DOCTORS MODAL STYLES
+   ===================================================== */
+
+.doctors-modal {
+    max-width: 800px;
+}
+
+.symptom-specialist-info {
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.specialist-recommendation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.specialist-recommendation .specialist-icon {
+    font-size: 32px;
+}
+
+.specialist-recommendation .specialist-text {
+    flex: 1;
+}
+
+.specialist-recommendation strong {
+    display: block;
+    font-size: 16px;
+}
+
+.emergency-badge {
+    display: inline-block;
+    background: #dc3545;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.location-status {
+    padding: 10px 20px;
+    background: var(--bg-secondary, #f5f5f5);
+    color: var(--text-muted, #666);
+    font-size: 14px;
+}
+
+.location-status .error {
+    color: var(--danger-color, #dc3545);
+}
+
+.map-container {
+    padding: 0;
+    background: #e0e0e0;
+}
+
+#doctorsMap {
+    border-radius: 0;
+}
+
+.map-placeholder {
+    padding: 40px;
+    text-align: center;
+    color: var(--text-muted, #666);
+}
+
+.doctors-list-container {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.doctors-list-container h3 {
+    margin: 0 0 15px 0;
+    color: var(--text-color, #333);
+}
+
+.doctor-card {
+    background: var(--bg-color, #fff);
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 12px;
+    transition: box-shadow 0.2s;
+}
+
+.doctor-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.doctor-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.doctor-icon {
+    font-size: 36px;
+}
+
+.doctor-info h4 {
+    margin: 0 0 4px 0;
+    color: var(--text-color, #333);
+    font-size: 16px;
+}
+
+.doctor-specialization {
+    color: var(--text-muted, #666);
+    font-size: 13px;
+}
+
+.doctor-details {
+    margin-bottom: 12px;
+}
+
+.doctor-details p {
+    margin: 4px 0;
+    color: var(--text-color, #555);
+    font-size: 13px;
+}
+
+.doctor-address {
+    font-weight: 500;
+}
+
+.doctor-rating {
+    color: #f59e0b !important;
+}
+
+.doctor-status {
+    font-weight: 500;
+}
+
+.doctor-status .open {
+    color: #10b981;
+}
+
+.doctor-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.doctor-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.doctor-btn:hover {
+    opacity: 0.9;
+}
+
+.call-btn {
+    background: #10b981;
+    color: white;
+}
+
+.directions-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.loading {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-muted, #666);
+}
+
+.no-results {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-muted, #666);
+}
+
+.error {
+    color: var(--danger-color, #dc3545);
+    padding: 20px;
+    text-align: center;
+}
+
+/* Quick Action Buttons */
+.quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 15px;
+}
+
+.quick-action-btn {
+    padding: 12px 18px;
+    background: var(--bg-secondary, #f5f5f5);
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-color, #333);
+}
+
+.quick-action-btn:hover {
+    background: var(--primary-color, #4facfe);
+    color: white;
+    border-color: var(--primary-color, #4facfe);
+}
+
+/* Dark mode support for new elements */
+@media (prefers-color-scheme: dark) {
+    .modal-content {
+        background-color: var(--bg-color, #1a1a2e);
+    }
+    
+    .modal-header {
+        border-bottom-color: var(--border-color, #333);
+    }
+    
+    .emergency-contact-card {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+    
+    .symptom-specialist-info {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .doctor-card {
+        background: var(--bg-secondary, #1a1a2e);
+        border-color: var(--border-color, #333);
+    }
+}

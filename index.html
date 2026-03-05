@@ -309,6 +309,67 @@
         </div>
     </div>
 
+    <!-- Emergency Contacts Modal -->
+    <div id="emergencyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEmergencyModal()">&times;</span>
+            <div class="modal-header">
+                <h2>🚨 Emergency Contacts</h2>
+                <select id="countrySelector" onchange="changeCountry()">
+                    <option value="india">🇮🇳 India</option>
+                    <option value="usa">🇺🇸 USA</option>
+                    <option value="uk">🇬🇧 UK</option>
+                </select>
+            </div>
+            <div class="emergency-grid" id="emergencyGrid">
+                <!-- Emergency contacts will be loaded here -->
+                <div class="loading">Loading emergency contacts...</div>
+            </div>
+            <div class="modal-footer">
+                <p class="emergency-note">💡 Tap any number to call immediately</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Find Doctors Modal -->
+    <div id="doctorsModal" class="modal">
+        <div class="modal-content doctors-modal">
+            <span class="close" onclick="closeDoctorsModal()">&times;</span>
+            <div class="modal-header">
+                <h2>👨‍⚕️ Find Specialists Near You</h2>
+            </div>
+            <div class="symptom-specialist-info" id="symptomSpecialistInfo">
+                <!-- Specialist recommendation based on symptoms -->
+            </div>
+            <div class="location-status" id="locationStatus">
+                <p>📍 Getting your location...</p>
+            </div>
+            <div class="map-container" id="mapContainer" style="display: none;">
+                <div id="doctorsMap" style="height: 300px; width: 100%;"></div>
+            </div>
+            <div class="doctors-list-container">
+                <h3>Nearby <span id="specialistType">Specialists</span></h3>
+                <div class="doctors-list" id="doctorsList">
+                    <!-- Doctor cards will be loaded here -->
+                    <div class="loading">Searching for doctors near you...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Specialist Info Modal -->
+    <div id="specialistModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSpecialistModal()">&times;</span>
+            <div class="modal-header">
+                <h2 id="specialistModalTitle">Specialist Information</h2>
+            </div>
+            <div class="specialist-info" id="specialistInfo">
+                <!-- Specialist details -->
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-</html>
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places" async defer></script>
