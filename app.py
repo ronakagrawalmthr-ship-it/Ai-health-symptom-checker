@@ -14,7 +14,15 @@ import html
 import re
 from flask import Flask, render_template, request, jsonify, send_file
 from flask_cors import CORS
-from openai import OpenAI
+
+# Try to import OpenAI, but make it optional
+try:
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+    print("Warning: OpenAI package not available. Using mock mode.")
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -31,7 +39,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 # Initialize OpenAI client if API key is available
 client = None
-if OPENAI_API_KEY:
+if OPENAI_AVAILABLE and OPENAI_API_KEY:
     try:
         client = OpenAI(api_key=OPENAI_API_KEY)
     except Exception as e:
@@ -1358,6 +1366,10 @@ Keep output structured, concise, and user-friendly. Format your response as JSON
 Do not provide any diagnosis - only possible causes based on symptoms presented."""
 
     try:
+        # Check if OpenAI client is available
+        if not client:
+            return None
+            
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
